@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 
+
 const dllPath = '../dll'
 module.exports = {
   mode: 'production',
@@ -17,6 +18,6 @@ module.exports = {
       path:path.join(__dirname,dllPath,'[name]-manifest.json'),
       name:'[name]_[hash]',
       context:process.cwd(),
-    })
+    }),
   ]
 }

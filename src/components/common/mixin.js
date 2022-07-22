@@ -1,5 +1,4 @@
 import { getStyle } from '../../config/mUtils'
-import { imgBaseUrl, localapi, proapi } from '../../config/env'
 
 export const loadMore = {
 	directives: {

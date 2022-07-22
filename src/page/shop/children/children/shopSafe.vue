@@ -91,8 +91,8 @@
                 <section class="license_img shop_status_container">
                     <header>许可证书</header>
                     <div class="img_container">
-                        <img :src="localapi || proapi ? imgBaseUrl + shopDetail.license.business_license_image : getImgPath(shopDetail.license.business_license_image)">
-                        <img :src="localapi || proapi ? imgBaseUrl + shopDetail.license.catering_service_license_image : getImgPath(shopDetail.license.catering_service_license_image)">
+                        <img :src="getImgPath(shopDetail.license.business_license_image)">
+                        <img :src="getImgPath(shopDetail.license.catering_service_license_image)">
                     </div>
                 </section>
             </section>
@@ -105,14 +105,12 @@
     import headTop from 'src/components/header/head'
     import {getImgPath} from 'src/components/common/mixin'
     import BScroll from 'better-scroll'
-    import { localapi, proapi, imgBaseUrl} from 'src/config/env'
+    import { imgBaseUrl} from 'src/config/env'
 
 
     export default {
     	data(){
             return{
-                localapi,
-                proapi,
                 imgBaseUrl
             }
         },
