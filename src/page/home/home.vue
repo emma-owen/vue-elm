@@ -1,10 +1,10 @@
 <template>
   	<div>
         <head-top signin-up='home'>
-            <span slot='logo' class="head_logo"  @click="reload">ele.me</span>
+            <span slot='logo' class="head_logo" >ele.me</span>
         </head-top>
         <nav class="city_nav">
-            <div class="city_tip">
+            <div class="city_tip" @click="reload">
                 <span>当前定位城市：</span>
                 <span>定位不准时，请在城市列表中选择</span>
             </div>
@@ -18,7 +18,7 @@
         <section id="hot_city_container">
             <h4 class="city_title">热门城市</h4>
             <ul class="citylistul clear">
-                <router-link  tag="li" v-for="item in hotcity" :to="'/city/' + item.id" :key="item.id">
+                <router-link  tag="a" v-for="item in hotcity" :to="'/city/' + item.id" :key="item.id">
                     {{item.name}}
                 </router-link>
             </ul>
@@ -40,62 +40,53 @@
     </div>
 </template>
 
-<script>
-import headTop from '../../components/header/head'
-import {cityGuess, hotcity, groupcity} from '../../service/getData'
+<script setup>
+import {ref,onMounted,computed} from 'vue';
+import { useStore } from 'vuex';
+import HeadTop from '../../components/header/head'
+import {cityGuess, hotcity as getHotCity, groupcity as getGroupCity} from '../../service/getData'
 
-export default {
-    data(){
-        return{
-            guessCity: '',   //当前城市
-            guessCityid: '', //当前城市id
-            hotcity: [],     //热门城市列表
-            groupcity: {},   //所有城市列表
-        }
-    },
-
-	mounted(){
-        // 获取当前城市
-        cityGuess().then(res => {
-            this.guessCity = res.name;
-            this.guessCityid = res.id;
-        })
-
-        //获取热门城市
-        hotcity().then(res => {
-            this.hotcity = res;
-        })
-
-        //获取所有城市
-        groupcity().then(res => {
-            this.groupcity = res;
-        })
-    },
-
-    components:{
-        headTop
-    },
-
-    computed:{
-        //将获取的数据按照A-Z字母开头排序
-        sortgroupcity(){
-            let sortobj = {};
+const guessCity = ref('');
+      const guessCityid = ref('');
+      const hotcity = ref([]);
+      const groupcity = ref({});
+      //将获取的数据按照A-Z字母开头排序
+      const sortgroupcity = computed(()=>{
+        let sortobj = {};
             for (let i = 65; i <= 90; i++) {
-                if (this.groupcity[String.fromCharCode(i)]) {
-                    sortobj[String.fromCharCode(i)] = this.groupcity[String.fromCharCode(i)];
+                const letter = String.fromCharCode(i);
+                if (groupcity.value[letter]) {
+                    sortobj[letter] = groupcity.value[letter];
                 }
             }
             return sortobj
-        }
-    },
+      });
+      onMounted(()=>{
+        // 获取当前城市
+        cityGuess().then(res => {
+            guessCity.value = res.name;
+            guessCityid.value = res.id;
+        })
 
-    methods:{
+        //获取热门城市
+        getHotCity().then(res => {
+            hotcity.value = res;
+        })
+
+        //获取所有城市
+        getGroupCity().then(res => {
+            groupcity.value = res;
+        })
+
+        const store = useStore();
+        console.log(store)
+      });
+
         //点击图标刷新页面
-        reload(){
+        const reload = ()=>{
             window.location.reload();
         }
-    },
-}
+
 
 </script>
 
@@ -148,7 +139,7 @@ export default {
         margin-bottom: 0.4rem;
     }
     .citylistul{
-        li{
+        a{
             float: left;
             text-align: center;
             color: $blue;
@@ -157,7 +148,7 @@ export default {
             @include wh(25%, 1.75rem);
             @include font(0.6rem, 1.75rem);
         }
-        li:nth-of-type(4n){
+        a:nth-of-type(4n){
             border-right: none;
         }
     }
